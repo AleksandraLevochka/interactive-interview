@@ -27,7 +27,14 @@ font-style: italic;
 
 */
 
+body, html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-family: "trade-gothic-next", sans-serif;
+}
 
+/*
 body {
   font-family: "trade-gothic-next", sans-serif;
   display: flex;
@@ -37,17 +44,63 @@ body {
   height: 100vh;
   background: #434040;
   padding: 20px;
-}
+} */
 
 .container {
-  max-width: 700px;
-  text-align: center;
+  display: flex;
+  height: 100vh;
 }
 
+.left {
+  flex: 1;
+  background-color: #e092ca;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+
+/*
 #output span {
   display: inline-block;
   margin: 4px;
   transition: all 0.3s ease;
+} */
+
+#startBtn {
+  padding: 16px 32px;
+  font-size: 1.5em;
+  border: none;
+  background-color: #c1e24a;
+  color: rgb(248, 248, 248);
+  border-radius: 30px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+#startBtn:hover {
+  background-color: #a2c429;
+}
+
+/* Right panel: scrollable word display */
+.right {
+  flex: 2;
+  padding: 40px;
+  background-color: #ffffff;
+  overflow-y: auto;
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  gap: 8px;
+}
+
+/* Style the words */
+.right span {
+  display: inline-block;
+  padding: 6px 10px;
+  border-radius: 4px;
+  background-color: #eee;
+  font-size: 16px;
 }
 
 .short-pause {
@@ -66,13 +119,23 @@ body {
   color: #d7ea05;
 }
 
-#startBtn {
-  padding: 10px 20px;
-  font-size: 16px;
-  border: none;
-  border-radius: 6px;
-  background-color: #3f88c5;
-  color: white;
-  cursor: pointer;
-  transition: background-color 0.3s;
+
+.pulsating-gradient {
+  background: radial-gradient(circle, #E092CA, #FFFAFA, #C2108F);
+  animation: pulse 2.5s infinite ease-in-out;
+}
+
+@keyframes pulse {
+  0% {
+    background-size: 100% 100%;
+    filter: brightness(1);
+  }
+  50% {
+    background-size: 110% 110%;
+    filter: brightness(1.1);
+  }
+  100% {
+    background-size: 100% 100%;
+    filter: brightness(1);
+  }
 }

@@ -3,49 +3,52 @@
 const startBtn = document.getElementById("startBtn");
 const output = document.getElementById("output");
 
+const leftPanel = document.getElementById("leftPanel"); // animate bg of left screen
 
-// This stores timestamp of the last word heard
+// stores timestamp of the last word heard
 let lastTimestamp = null;
 
-// define 'recognition' outside the function so we can start and stop it
 let recognition;
 
-// This flag tells us if the app is currently listening or not
+// to understand if the site is currently listening or not
 let isListening = false;
 
-// When the Start button is clicked
+// when start button is clicked
 startBtn.addEventListener("click", () => {
-
   // If it's already listening, stop the speech recognition
   if (isListening) {
     recognition.stop(); // stops listening
     startBtn.textContent = "Start Listening"; // update button text
     startBtn.style.backgroundColor = ""; // reset button color
+
+    leftPanel.classList.remove("pulsating-gradient"); // keyframes animation
+
     isListening = false;
-    return; // exit the function
+    return; 
   }
 
-  // Create a new SpeechRecognition object (Web Speech API)
+  // Web Speech API
   recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
 
-  // Tell it to keep listening even after each phrase ends
+  // Tell it to keep listening even after each phrase ends so it makes up sentences
   recognition.continuous = true;
 
-  // We only want final results (not in-progress guesses)
+  // only want final result (not in-progress guesses) 
   recognition.interimResults = false;
 
+  console.log("Recognition started"); // check to see if recognition started
 
-  console.log("Recognition started");  // checking to see if recognition started
-
- 
   recognition.onstart = () => {
     console.log("Listening...");
     startBtn.textContent = "Stop Listening";
-    startBtn.style.backgroundColor = "#d7263d";
+    startBtn.style.backgroundColor = "#EDDD53";
+
+    leftPanel.classList.add("pulsating-gradient"); // begin left screen animation
+
     isListening = true;
   };
 
-  // check for errors in console 
+  // double check for errors in console 
   recognition.onerror = (event) => {
     console.error("Speech recognition error:", event.error);
   };
@@ -54,47 +57,49 @@ startBtn.addEventListener("click", () => {
   recognition.onend = () => {
     startBtn.textContent = "Start Listening"; // reset text
     startBtn.style.backgroundColor = ""; // reset style
+
+    leftPanel.classList.remove("pulsating-gradient"); // stop left screen animation
+
     isListening = false;
   };
 
-
-
- // Get the most recent heard result
+  // get the most recent result
   recognition.onresult = (event) => {
-    console.log("Result recorded");
-    console.log(event);
-   
-    const result = event.results[event.results.length - 1];
-    const transcript = result[0].transcript.trim(); 
-    const words = transcript.split(" ");
-    const now = Date.now();
-    const word = words[words.length - 1];
+    let fullTranscript = "";
 
-
-    // display that word
-    let span = document.createElement("span");
-    span.textContent = word;
-
-    // Check how much time passed since the last word
-    if (lastTimestamp) {
-      let gap = now - lastTimestamp; // difference in milliseconds
-
-
-      if (gap < 600) {
-        span.className = "short-pause"; // quick pause = maybe excited
-      } else if (gap < 1500) {
-        span.className = "medium-pause"; // medium pause = natural pacing
-      } else {
-        span.className = "long-pause"; // long pause = maybe thinking or dramatic
-      }
+    for (let i = event.resultIndex; i < event.results.length; i++) {
+      const transcript = event.results[i][0].transcript.trim();
+      fullTranscript += transcript + " ";
     }
 
+    const words = fullTranscript.trim().split(" ");
+    const now = Date.now();
 
-    // Save this timestamp for the next comparison + Add the word to html 
-    lastTimestamp = now;
-    output.appendChild(span);
-};
+    words.forEach((word, index) => {
+      const span = document.createElement("span");
+      span.textContent = word;
 
-  // Start listening 
+      if (lastTimestamp) {
+        const gap = now - lastTimestamp;
+
+        if (gap < 600) {
+          span.className = "short-pause";
+        } else if (gap < 1500) {
+          span.className = "medium-pause";
+        } else {
+          span.className = "long-pause";
+        }
+      }
+
+      // update timestamp only once for the last word
+      if (index === words.length - 1) {
+        lastTimestamp = now;
+      }
+
+      output.appendChild(span);
+    });
+  };
+
+  // jesus christ, you can finally start 
   recognition.start();
 });
