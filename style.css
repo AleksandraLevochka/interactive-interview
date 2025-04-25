@@ -1,11 +1,78 @@
-html, body {
-    margin: 0;
-    padding: 0;
-  }
-  canvas {
-    display: block;
-  }
-  
-.h1{
-    size: 12pt;
+/* FONTS 
+
+Trade Gothic Next LT Pro Light
+font-family: "trade-gothic-next", sans-serif;
+font-weight: 300;
+font-style: normal;
+
+Trade Gothic Next LT Pro Regular
+font-family: "trade-gothic-next", sans-serif;
+font-weight: 400;
+font-style: normal;
+
+Trade Gothic Next LT Pro Italic
+font-family: "trade-gothic-next", sans-serif;
+font-weight: 400;
+font-style: italic;
+
+Trade Gothic Next LT Pro Bold
+font-family: "trade-gothic-next", sans-serif;
+font-weight: 700;
+font-style: normal;
+
+Trade Gothic Next LT Pro Bold Italic
+font-family: "trade-gothic-next", sans-serif;
+font-weight: 700;
+font-style: italic;
+
+*/
+
+
+body {
+  font-family: "trade-gothic-next", sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  height: 100vh;
+  background: #434040;
+  padding: 20px;
+}
+
+.container {
+  max-width: 700px;
+  text-align: center;
+}
+
+#output span {
+  display: inline-block;
+  margin: 4px;
+  transition: all 0.3s ease;
+}
+
+.short-pause {
+  font-weight: bold;
+  color: #d7263d;
+}
+
+.medium-pause {
+  font-style: italic;
+  color: #3f88c5;
+}
+
+.long-pause {
+  opacity: 0.6;
+  font-family: serif;
+  color: #d7ea05;
+}
+
+#startBtn {
+  padding: 10px 20px;
+  font-size: 16px;
+  border: none;
+  border-radius: 6px;
+  background-color: #3f88c5;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s;
 }
