@@ -115,8 +115,9 @@ body {
 
 .long-pause {
   opacity: 0.6;
+  letter-spacing: 5px;
   font-family: serif;
-  color: #d7ea05;
+  color: #04b31b;
 }
 
 
