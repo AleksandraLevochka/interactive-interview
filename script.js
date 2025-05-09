@@ -1,3 +1,16 @@
+// connecting json to js
+let afinnData = {};
+
+fetch('afinn.json')
+  .then(response => response.json())
+  .then(data => {
+    afinnData = data;
+    console.log("AFINN data loaded"); // confirm it's working
+  })
+  .catch(error => console.error("Error loading AFINN data:", error));
+
+
+
 // this activates the listening button and prints the text//
 
 const startBtn = document.getElementById("startBtn");
@@ -41,7 +54,7 @@ startBtn.addEventListener("click", () => {
   recognition.onstart = () => {
     console.log("Listening...");
     startBtn.textContent = "Stop Listening";
-    startBtn.style.backgroundColor = "#EDDD53";
+    startBtn.style.backgroundColor = "#E8669C";
 
     leftPanel.classList.add("pulsating-gradient"); // begin left screen animation
 
@@ -75,21 +88,97 @@ startBtn.addEventListener("click", () => {
     const words = fullTranscript.trim().split(" ");
     const now = Date.now();
 
+    const pauseDuration = lastTimestamp ? now - lastTimestamp : 0; 
+
+    // SPAN 5: visually represent pauses (silences) in the text
+
+
+    //If silence was more than 2 seconds, insert a visual ellipsis
+    if (pauseDuration > 2000) {
+      const ellipsis = document.createElement("span"); 
+      ellipsis.textContent = "..."; 
+      ellipsis.classList.add("dynamic-ellipsis"); 
+
+      // for dynamic size 
+      const baseSize = 16; // px
+      const sizeMultiplier = pauseDuration / 1000; 
+      const fontSize = baseSize + sizeMultiplier * 2; 
+
+      ellipsis.style.fontSize = fontSize + "px";
+
+      output.appendChild(ellipsis);
+  
+    }
+
     words.forEach((word, index) => {
       const span = document.createElement("span");
       span.textContent = word;
 
+
+      // SPAN 4: storing the time stamp for future 
+      const wordTimestamp = now;
+
+
+      // SPAN 1: color and typeface of the word are based on the mood score assigned in JSON
+      // words are put through json, analysed and style is assigned (check css for style)
+
+      const sentimentScore = afinnData[word.toLowerCase()];
+
+      if (sentimentScore !== undefined) {
+        if (sentimentScore >= 2) {
+          span.classList.add("sentiment-positive");
+        } else if (sentimentScore <= -2) {
+          span.classList.add("sentiment-negative");
+        } else if (sentimentScore >= -1 && sentimentScore <= 1) {
+          span.classList.add("sentiment-neutral");
+        }
+      }
+
+      
+      //  SPAN 2: font size based on gap length 
       if (lastTimestamp) {
         const gap = now - lastTimestamp;
 
-        if (gap < 600) {
-          span.className = "short-pause";
-        } else if (gap < 1500) {
-          span.className = "medium-pause";
-        } else {
-          span.className = "long-pause";
-        }
+        const calculatedSize = gap / 200;
+        const maxSize = 50; // limit
+        const fontSize = Math.min(calculatedSize, maxSize);
+
+        span.style.fontSize = fontSize + "px";
       }
+
+      // SPAN 3: letter spacing based on length of the word 
+
+      let spacing; 
+      if (word.length <= 4) {
+        spacing = "0.3em"; 
+      } else if (word.length <= 7) {
+        spacing = "0.15em";
+      } else {
+        spacing = "0.05em";
+      }
+
+      span.style.letterSpacing = spacing;
+      span.style.marginRight = "8px"; // this is for space between words but check when testing if it's needed 
+
+
+      // SPAN 4: The words start fading out after 1.5 min and disappear after 3min -- ghost effect 
+
+      setTimeout(() => {
+        const fadeDuration = 3 * 60 * 1000; // that's 3 min total
+        const fadeStart = 1.5 * 60 * 1000 // starts at 1.5 min to fade 
+        const elapsed = now - wordTimestamp; 
+
+        if (elapsed >= fadeStart) {
+          const opacity = 1 - (elapsed - fadeStart) / (fadeDuration - fadeStart); 
+          span.style.opacity = opacity; // starts the graduall fade 
+        }
+
+        if (elapsed >= fadeDuration) {
+          span.style.visibility = "hidden"; // word becomes invisible after 3 min 
+        }
+
+      }, 0)
+
 
       // update timestamp only once for the last word
       if (index === words.length - 1) {
@@ -103,3 +192,14 @@ startBtn.addEventListener("click", () => {
   // jesus christ, you can finally start 
   recognition.start();
 });
+
+
+ //code below went under const gap = now - lastTimestamp;
+
+        // if (gap < 600) {
+        //   span.className = "short-pause";
+        // } else if (gap < 1500) {
+        //   span.className = "medium-pause";
+        // } else {
+        //   span.className = "long-pause";
+        // }

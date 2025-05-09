@@ -25,6 +25,32 @@ font-family: "trade-gothic-next", sans-serif;
 font-weight: 700;
 font-style: italic;
 
+
+Span Light Italic
+font-family: "span", serif;
+font-weight: 300;
+font-style: italic;
+
+Span Regular
+font-family: "span", serif;
+font-weight: 400;
+font-style: normal;
+
+Span Italic
+font-family: "span", serif;
+font-weight: 400;
+font-style: italic;
+
+Span Bold
+font-family: "span", serif;
+font-weight: 700;
+font-style: normal;
+
+Span Bold Italic
+font-family: "span", serif;
+font-weight: 700;
+font-style: italic;
+
 */
 
 body, html {
@@ -32,6 +58,46 @@ body, html {
   padding: 0;
   height: 100%;
   font-family: "trade-gothic-next", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.top-nav {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  
+
+  height: 100px;
+  background-color: #B0CC5D;
+  display: flex;
+  align-items: center;
+  padding-left: 30px;
+  gap: 30px;
+}
+
+.nav-btn {
+  background-color: #E091CA;
+  color: #FFF9EB;
+  border: none;
+  border-radius: 30px;
+  padding: 12px 24px;
+  font-size: 1em;
+  cursor: pointer;
+  font-family: "trade-gothic-next", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  text-align: center;
+  width: 187px; /* default width for the smaller buttons */
+  transition: background-color 0.3s;
+}
+
+.nav-btn:hover {
+  background-color: #c577b1;
+}
+
+.wide-btn {
+  width: 488px;
 }
 
 /*
@@ -52,8 +118,8 @@ body {
 }
 
 .left {
-  flex: 1;
-  background-color: #e092ca;
+  width: 546px;
+  background-color: #E091CA;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -71,22 +137,22 @@ body {
   padding: 16px 32px;
   font-size: 1.5em;
   border: none;
-  background-color: #c1e24a;
-  color: rgb(248, 248, 248);
+  background-color: #B0CC5D;
+  color: #FFF9EB;
   border-radius: 30px;
   cursor: pointer;
   transition: background-color 0.3s;
 }
 
 #startBtn:hover {
-  background-color: #a2c429;
+  background-color: #8EBE47;
 }
 
 /* Right panel: scrollable word display */
 .right {
-  flex: 2;
+  flex: 1;
   padding: 40px;
-  background-color: #ffffff;
+  background-color: #FFF9EB;
   overflow-y: auto;
   display: flex;
   flex-wrap: wrap;
@@ -101,25 +167,14 @@ body {
   border-radius: 4px;
   background-color: #eee;
   font-size: 16px;
+
+  transition: opacity 1s ease-out; /* transition for fade "ghost" */
 }
 
-.short-pause {
-  font-weight: bold;
-  color: #d7263d;
+/* Box behind the word stays visibile while the word fades */
+.right span.faded {
+  opacity: 0;
 }
-
-.medium-pause {
-  font-style: italic;
-  color: #3f88c5;
-}
-
-.long-pause {
-  opacity: 0.6;
-  letter-spacing: 5px;
-  font-family: serif;
-  color: #04b31b;
-}
-
 
 .pulsating-gradient {
   background: radial-gradient(circle, #E092CA, #FFFAFA, #C2108F);
@@ -140,3 +195,62 @@ body {
     filter: brightness(1);
   }
 }
+
+/* json styles */ 
+
+.sentiment-positive {
+  font-family: "span", serif;
+  font-weight: 400;
+  font-style: italic;
+
+  color: #E091CA;
+}
+
+.sentiment-negative {
+  font-family: "trade-gothic-next", sans-serif;
+  font-weight: 700;
+  font-style: normal; 
+
+  color: #375297;
+}
+
+.sentiment-neutral {
+  font-family: "span", serif;
+  font-weight: 400;
+  font-style: normal;
+
+  text-decoration: underline;
+  
+  color: #B0CC5B;
+}
+
+/* dynamic ellipsis */
+
+.dynamic-ellipsis {
+  opacity: 0.5;
+  margin-right: 12px;
+  color: #2B2B2B;
+  font-family: "span", serif;
+  font-weight: 400;
+  font-style: italic;
+}
+
+
+/* used for style based on pauses but I'm not using it anymore (might tho) 
+.short-pause {
+  font-weight: bold;
+  color: #d7263d;
+}
+
+.medium-pause {
+  font-style: italic;
+  color: #3f88c5;
+}
+
+.long-pause {
+  opacity: 0.6;
+  letter-spacing: 5px;
+  font-family: serif;
+  color: #04b31b;
+}
+*/
