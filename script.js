@@ -88,26 +88,29 @@ startBtn.addEventListener("click", () => {
     const words = fullTranscript.trim().split(" ");
     const now = Date.now();
 
+    // adding these for switch toggles
+    const sentimentOn = document.getElementById("toggleSentiment").checked;
+    const fontSizeOn = document.getElementById("toggleFontSize").checked;
+    const spacingOn = document.getElementById("toggleSpacing").checked;
+    const ellipsisOn = document.getElementById("toggleEllipsis").checked;
+    const fadingOn = document.getElementById("toggleFading").checked;
+
     const pauseDuration = lastTimestamp ? now - lastTimestamp : 0; 
 
     // SPAN 5: visually represent pauses (silences) in the text
 
-
     //If silence was more than 2 seconds, insert a visual ellipsis
-    if (pauseDuration > 2000) {
-      const ellipsis = document.createElement("span"); 
-      ellipsis.textContent = "..."; 
-      ellipsis.classList.add("dynamic-ellipsis"); 
-
-      // for dynamic size 
-      const baseSize = 16; // px
-      const sizeMultiplier = pauseDuration / 1000; 
-      const fontSize = baseSize + sizeMultiplier * 2; 
-
-      ellipsis.style.fontSize = fontSize + "px";
-
-      output.appendChild(ellipsis);
+    if (ellipsisOn && pauseDuration > 2000) {
+      const ellipsis = document.createElement("span");
+      ellipsis.textContent = "...";
+      ellipsis.classList.add("dynamic-ellipsis");
   
+      const baseSize = 16;
+      const sizeMultiplier = pauseDuration / 1000;
+      const fontSize = baseSize + sizeMultiplier * 2;
+      ellipsis.style.fontSize = fontSize + "px";
+  
+      output.appendChild(ellipsis);
     }
 
     words.forEach((word, index) => {
@@ -124,68 +127,70 @@ startBtn.addEventListener("click", () => {
 
       const sentimentScore = afinnData[word.toLowerCase()];
 
-      if (sentimentScore !== undefined) {
+      if (sentimentOn && sentimentScore !== undefined) {
         if (sentimentScore >= 2) {
           span.classList.add("sentiment-positive");
         } else if (sentimentScore <= -2) {
           span.classList.add("sentiment-negative");
-        } else if (sentimentScore >= -1 && sentimentScore <= 1) {
+        } else {
           span.classList.add("sentiment-neutral");
         }
       }
 
       
       //  SPAN 2: font size based on gap length 
-      if (lastTimestamp) {
+      if (fontSizeOn && lastTimestamp) {
         const gap = now - lastTimestamp;
-
         const calculatedSize = gap / 200;
-        const maxSize = 50; // limit
+        const maxSize = 50;
         const fontSize = Math.min(calculatedSize, maxSize);
-
         span.style.fontSize = fontSize + "px";
       }
 
       // SPAN 3: letter spacing based on length of the word 
 
-      let spacing; 
-      if (word.length <= 4) {
-        spacing = "0.3em"; 
-      } else if (word.length <= 7) {
-        spacing = "0.15em";
-      } else {
-        spacing = "0.05em";
+      if (spacingOn) {
+        let spacing;
+        if (word.length <= 4) {
+          spacing = "0.3em";
+        } else if (word.length <= 7) {
+          spacing = "0.15em";
+        } else {
+          spacing = "0.05em";
+        }
+        span.style.letterSpacing = spacing;
       }
 
-      span.style.letterSpacing = spacing;
       span.style.marginRight = "8px"; // this is for space between words but check when testing if it's needed 
 
 
       // SPAN 4: The words start fading out after 1.5 min and disappear after 3min -- ghost effect 
 
-      setTimeout(() => {
-        const fadeDuration = 3 * 60 * 1000; // that's 3 min total
-        const fadeStart = 1.5 * 60 * 1000 // starts at 1.5 min to fade 
-        const elapsed = now - wordTimestamp; 
-
-        if (elapsed >= fadeStart) {
-          const opacity = 1 - (elapsed - fadeStart) / (fadeDuration - fadeStart); 
-          span.style.opacity = opacity; // starts the graduall fade 
-        }
-
-        if (elapsed >= fadeDuration) {
-          span.style.visibility = "hidden"; // word becomes invisible after 3 min 
-        }
-
-      }, 0)
-
-
-      // update timestamp only once for the last word
+      if (fadingOn) {
+        const fadeStart = 1.5 * 60 * 1000;
+        const fadeDuration = 3 * 60 * 1000;
+  
+        const interval = setInterval(() => {
+          const elapsed = Date.now() - wordTimestamp;
+  
+          if (elapsed >= fadeStart) {
+            const opacity = 1 - (elapsed - fadeStart) / (fadeDuration - fadeStart);
+            span.style.opacity = Math.max(opacity, 0);
+          }
+  
+          if (elapsed >= fadeDuration) {
+            span.style.visibility = "hidden";
+            clearInterval(interval);
+          }
+        }, 1000);
+      }
+  
       if (index === words.length - 1) {
         lastTimestamp = now;
       }
 
       output.appendChild(span);
+      output.scrollTo({ top: output.scrollHeight, behavior: "smooth" });
     });
   };
 
