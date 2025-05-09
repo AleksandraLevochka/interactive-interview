@@ -1,3 +1,15 @@
+setTimeout(() => {
+  const loader = document.getElementById("loader");
+  if (loader) {
+    loader.classList.add("fade-out");
+    setTimeout(() => {
+      loader.style.display = "none";
+    }, 1000); // allow fade-out to finish
+  }
+}, 2000); // 3 sec
+
+
+
 // connecting json to js
 let afinnData = {};
 
