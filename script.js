@@ -6,7 +6,7 @@ setTimeout(() => {
       loader.style.display = "none";
     }, 1000); // allow fade-out to finish
   }
-}, 2000); // 3 sec
+}, 3000); // 3 sec
 
 
 
